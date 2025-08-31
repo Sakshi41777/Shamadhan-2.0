@@ -1,33 +1,80 @@
-// Import express
-const express = require("express");
-const app = express();
+import React, { useState, useEffect } from "react";
+import StudentCard from "./components/StudentCard";
 
+function App() {
+  const [students, setStudents] = useState([]);
+  const [form, setForm] = useState({ id: "", name: "", branch: "" });
 
-app.use(express.json());
+  useEffect(() => {
+    fetch("http://localhost:3000/students")
+      .then((res) => res.json())
+      .then((data) => setStudents(data))
+      .catch((err) => console.error(err));
+  }, []);
 
+  const handleChange = (e) => {
+    setForm({ ...form, [e.target.name]: e.target.value });
+  };
 
-let students = [
-  { id: 1, name: "Aman", branch: "CSE" },
-  { id: 2, name: "Priya", branch: "ECE" },
-  { id: 3, name: "Rahul", branch: "ME" },
-  // Sample student data
-  { id: 4, name: "Sakshi", branch: "AI" }
-];
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    fetch("http://localhost:3000/students", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(form),
+    })
+      .then((res) => res.json())
+      .then((data) => setStudents(data.students));
+  };
 
-// GET route → return list of students
-app.get("/students", (req, res) => {
-  res.json(students);
-});
+  return (
+    <div className="min-h-screen bg-gray-100 p-8">
+      <h1 className="text-3xl font-bold mb-6 text-center text-indigo-700">
+        🎓 Student Directory
+      </h1>
 
-// POST route → add a new student
-app.post("/students", (req, res) => {
-  const newStudent = req.body;
-  students.push(newStudent);
-  res.json({ message: "Student added!", students });
-});
+      {/* Add Student Form */}
+      <form
+        onSubmit={handleSubmit}
+        className="bg-white shadow-md rounded-xl p-6 mb-8 max-w-md mx-auto"
+      >
+        <input
+          type="text"
+          name="id"
+          placeholder="ID"
+          value={form.id}
+          onChange={handleChange}
+          className="border p-2 rounded w-full mb-3 focus:ring-2 focus:ring-indigo-400"
+        />
+        <input
+          type="text"
+          name="name"
+          placeholder="Name"
+          value={form.name}
+          onChange={handleChange}
+          className="border p-2 rounded w-full mb-3 focus:ring-2 focus:ring-indigo-400"
+        />
+        <input
+          type="text"
+          name="branch"
+          placeholder="Branch"
+          value={form.branch}
+          onChange={handleChange}
+          className="border p-2 rounded w-full mb-3 focus:ring-2 focus:ring-indigo-400"
+        />
+        <button className="bg-indigo-600 text-white px-4 py-2 rounded w-full hover:bg-indigo-700 transition">
+          Add Student
+        </button>
+      </form>
 
-// Start server
-const PORT = 3000;
-app.listen(PORT, () => {
-  console.log(`Server running on http://localhost:${PORT}`);
-});
+      {/* Student Cards */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+        {students.map((student) => (
+          <StudentCard key={student.id} student={student} />
+        ))}
+      </div>
+    </div>
+  );
+}
+
+export default App;
