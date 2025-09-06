@@ -1,0 +1,8 @@
+* { box-sizing: border-box; font-family: system-ui, Arial; }
+body { margin: 0; background: #0f172a; color: #e2e8f0; }
+.container { max-width: 900px; margin: 40px auto; padding: 24px; background: #111827; border-radius: 16px; }
+a { color: #93c5fd; text-decoration: none; }
+input, button { padding: 10px 12px; border-radius: 8px; border: 1px solid #334155; background: #0b1220; color: #e2e8f0; }
+button { cursor: pointer; }
+.row { display: flex; gap: 12px; margin: 8px 0; }
+.nav { display:flex; gap:12px; margin-bottom: 16px; }
